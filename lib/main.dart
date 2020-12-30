@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:reorderables/reorderables.dart';
 
 void main() {
@@ -13,25 +14,25 @@ class MyApp extends StatefulWidget {
 }
 
 class _State extends State<MyApp> {
-  List _toDos = List<Widget>.generate(
-      20,
-      (int index) => Dismissible(
-          key: Key(index.toString()),
-          onDismissed: (direction) {
-            // Remove the item from the data source.
-            setState(() {
-              _toDos.removeAt(index);
-            });
-
-            // Show a snackbar. This snackbar could also contain "Undo" actions.
-            Scaffold.of(context)
-                .showSnackBar(SnackBar(content: Text("$index dismissed")));
-          },
-          child: CheckboxListTile(
-              value: false, onChanged: null, title: Text('index: $index'))));
-
   @override
   Widget build(BuildContext context) {
+    List _toDos;
+    _toDos = List<Widget>.generate(
+        20,
+        (int index) => Dismissible(
+            key: Key(index.toString()),
+            onDismissed: (direction) {
+              // Remove the item from the data source.
+              setState(() {
+                _toDos.removeAt(index);
+              });
+              // Show a snackbar. This snackbar could also contain "Undo" actions.
+              Scaffold.of(context)
+                  .showSnackBar(SnackBar(content: Text("$index dismissed")));
+            },
+            child: CheckboxListTile(
+                value: false, onChanged: null, title: Text('index: $index'))));
+
     return new Scaffold(
       body: CustomScrollView(
         controller: PrimaryScrollController.of(context) ?? ScrollController(),

@@ -20,7 +20,7 @@ class _State extends State<MyApp> {
     _toDos = List<Widget>.generate(
         20,
         (int index) => Dismissible(
-            key: Key(index.toString()),
+            key: UniqueKey(),
             onDismissed: (direction) {
               // Remove the item from the data source.
               setState(() {

@@ -14,25 +14,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _State extends State<MyApp> {
+  // Will generate out list as Maps so we can update the check for each of them
+  List<Map> _toDos = List.generate(
+      20, (int index) => {'check': false, 'label': 'index $index'});
+
   @override
   Widget build(BuildContext context) {
-    List _toDos;
-    _toDos = List<Widget>.generate(
-        20,
-        (int index) => Dismissible(
-            key: UniqueKey(),
-            onDismissed: (direction) {
-              // Remove the item from the data source.
-              setState(() {
-                _toDos.removeAt(index);
-              });
-              // Show a snackbar. This snackbar could also contain "Undo" actions.
-              Scaffold.of(context)
-                  .showSnackBar(SnackBar(content: Text("$index dismissed")));
-            },
-            child: CheckboxListTile(
-                value: false, onChanged: null, title: Text('index: $index'))));
-
     return new Scaffold(
       body: CustomScrollView(
         controller: PrimaryScrollController.of(context) ?? ScrollController(),
@@ -73,13 +60,34 @@ class _State extends State<MyApp> {
           ReorderableSliverList(
             onReorder: (int oldIndex, int newIndex) {
               setState(() {
-                Widget item = _toDos.removeAt(oldIndex);
+                Map item = _toDos.removeAt(oldIndex);
                 _toDos.insert(newIndex, item);
               });
             },
             delegate: ReorderableSliverChildBuilderDelegate(
-                (BuildContext context, int index) => _toDos[index],
-                childCount: _toDos.length),
+                (BuildContext context, int index) {
+              // get out map from the list
+              Map item = _toDos[index];
+              return Dismissible(
+                  key: UniqueKey(),
+                  onDismissed: (direction) {
+                    // Remove the item from the data source.
+                    setState(() {
+                      _toDos.removeAt(index);
+                    });
+                    // Show a snackbar. This snackbar could also contain "Undo" actions.
+                    Scaffold.of(context).showSnackBar(
+                        SnackBar(content: Text("${item['label']} dismissed")));
+                  },
+                  child: CheckboxListTile(
+                      value: item['check'],
+                      onChanged: (v) {
+                        // set the 'check' value to the new checkbox value(v)
+                        item['check'] = v;
+                        setState(() {});
+                      },
+                      title: Text(item['label'])));
+            }, childCount: _toDos.length),
           ),
         ],
       ),

@@ -16,7 +16,21 @@ class MyApp extends StatefulWidget {
 class _State extends State<MyApp> {
   // Will generate out list as Maps so we can update the check for each of them
   List<Map> _toDos = List.generate(
-      20, (int index) => {'check': false, 'label': 'index $index'});
+      5, (int index) => {'check': false, 'label': 'index $index'});
+
+  void _add() {
+    int newIndex = _toDos.length;
+    setState(() {
+      Map item = {'check': false, 'label': 'index $newIndex'};
+      _toDos.insert(newIndex, item);
+    });
+  }
+
+  String _value = '';
+
+  void _onSubmit(String value) {
+    setState(() => _value = value);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +71,17 @@ class _State extends State<MyApp> {
                   Spacer()
                 ],
               )),
+          TextField(
+            decoration: new InputDecoration(
+              border: new OutlineInputBorder(),
+              labelText: 'New Item',
+              hintText: 'Input task',
+            ),
+            autocorrect: true,
+            autofocus: false,
+            keyboardType: TextInputType.text,
+            onSubmitted: _onSubmit,
+          ),
           ReorderableSliverList(
             onReorder: (int oldIndex, int newIndex) {
               setState(() {
@@ -106,7 +131,7 @@ class _State extends State<MyApp> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: null,
+        onPressed: () => _add(),
         child: new Icon(
           Icons.add,
           size: 30,

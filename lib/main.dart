@@ -88,13 +88,40 @@ class _State extends State<MyApp> {
               return Dismissible(
                 key: UniqueKey(),
                 onDismissed: (direction) {
-                  // Remove the item from the data source.
-                  setState(() {
-                    _toDos.removeAt(index);
-                  });
-                  // Show a snackbar. This snackbar could also contain "Undo" actions.
+                  // Remove the dismissed item from the list
+                  _toDos.removeAt(index);
+
+                  String action;
+                  if (direction == DismissDirection.startToEnd) {
+                    // archiveItem();
+                    action = "archived";
+                  } else {
+                    // deletedItem();
+                    action = "deleted";
+                  }
                   Scaffold.of(context).showSnackBar(
-                      SnackBar(content: Text("${item['label']} dismissed")));
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          Text("${item['label']} $action"),
+                          FlatButton(
+                              onPressed: () {
+                                setState(() {
+                                  _toDos.insert(index, item);
+                                });
+                              },
+                              child: Text(
+                                'Undo',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                                textAlign: TextAlign.right,
+                              ))
+                        ],
+                      ),
+                    ),
+                  );
                 },
                 child: CheckboxListTile(
                     value: item['check'],

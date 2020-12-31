@@ -115,6 +115,7 @@ class _State extends State<MyApp> {
             children: <Widget>[
               new Text('To-Do List'),
               new FlatButton(onPressed: null, child: new Text('Archive')),
+              new FlatButton(onPressed: null, child: new Text('History')),
               new FlatButton(
                   onPressed: () => Navigator.pop(context),
                   child: new Text('close'))
@@ -143,15 +144,18 @@ class _State extends State<MyApp> {
                 actions: [
                   FlatButton(
                     textColor: Colors.green,
-                    onPressed: null,
+                    onPressed: () => Navigator.pop(context),
                     child: Text('CANCEL'),
                   ),
                   FlatButton(
                     textColor: Colors.green,
-                    onPressed: () => _add,
+                    onPressed: () {
+                      _add();
+                      Navigator.pop(context);
+                    },
                     child: Text('ADD'),
                   ),
-                ],
+                ], // actions
               );
             }),
         child: new Icon(

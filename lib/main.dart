@@ -101,25 +101,15 @@ class _State extends State<MyApp> {
                   }
                   Scaffold.of(context).showSnackBar(
                     SnackBar(
-                      content: Row(
-                        children: [
-                          Text("${item['label']} $action"),
-                          FlatButton(
-                              onPressed: () {
-                                setState(() {
-                                  _toDos.insert(index, item);
-                                });
-                              },
-                              child: Text(
-                                'Undo',
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                                textAlign: TextAlign.right,
-                              ))
-                        ],
-                      ),
+                      action: SnackBarAction(
+                          label: 'undo',
+                          textColor: Colors.red,
+                          onPressed: () {
+                            setState(() {
+                              _toDos.insert(index, item);
+                            });
+                          }),
+                      content: Text("${item['label']} $action"),
                     ),
                   );
                 },

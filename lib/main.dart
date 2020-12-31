@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:reorderables/reorderables.dart';
 
 void main() {
@@ -16,12 +15,12 @@ class MyApp extends StatefulWidget {
 class _State extends State<MyApp> {
   // Will generate out list as Maps so we can update the check for each of them
   List<Map> _toDos = List.generate(
-      5, (int index) => {'check': false, 'label': 'index $index'});
+      0, (int index) => {'check': false, 'label': 'index $index'});
 
   void _add() {
     int newIndex = _toDos.length;
     setState(() {
-      Map item = {'check': false, 'label': 'index $newIndex'};
+      Map item = {'check': false, 'label': _value};
       _toDos.insert(newIndex, item);
     });
   }
@@ -29,6 +28,10 @@ class _State extends State<MyApp> {
   String _value = '';
 
   void _onSubmit(String value) {
+    setState(() => _value = value);
+  }
+
+  void _onChange(String value) {
     setState(() => _value = value);
   }
 
@@ -71,17 +74,6 @@ class _State extends State<MyApp> {
                   Spacer()
                 ],
               )),
-          TextField(
-            decoration: new InputDecoration(
-              border: new OutlineInputBorder(),
-              labelText: 'New Item',
-              hintText: 'Input task',
-            ),
-            autocorrect: true,
-            autofocus: false,
-            keyboardType: TextInputType.text,
-            onSubmitted: _onSubmit,
-          ),
           ReorderableSliverList(
             onReorder: (int oldIndex, int newIndex) {
               setState(() {
@@ -131,7 +123,37 @@ class _State extends State<MyApp> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _add(),
+        onPressed: () => showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('New To-Do'),
+                content: TextField(
+                  decoration: new InputDecoration(
+                    border: new OutlineInputBorder(),
+                    labelText: 'New Item',
+                    hintText: 'Input task',
+                  ),
+                  autocorrect: true,
+                  autofocus: false,
+                  keyboardType: TextInputType.text,
+                  onSubmitted: _onSubmit,
+                  onChanged: _onChange,
+                ),
+                actions: [
+                  FlatButton(
+                    textColor: Colors.green,
+                    onPressed: null,
+                    child: Text('CANCEL'),
+                  ),
+                  FlatButton(
+                    textColor: Colors.green,
+                    onPressed: () => _add,
+                    child: Text('ADD'),
+                  ),
+                ],
+              );
+            }),
         child: new Icon(
           Icons.add,
           size: 30,

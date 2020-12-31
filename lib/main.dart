@@ -86,24 +86,77 @@ class _State extends State<MyApp> {
               // get out map from the list
               Map item = _toDos[index];
               return Dismissible(
-                  key: UniqueKey(),
-                  onDismissed: (direction) {
-                    // Remove the item from the data source.
-                    setState(() {
-                      _toDos.removeAt(index);
-                    });
-                    // Show a snackbar. This snackbar could also contain "Undo" actions.
-                    Scaffold.of(context).showSnackBar(
-                        SnackBar(content: Text("${item['label']} dismissed")));
-                  },
-                  child: CheckboxListTile(
-                      value: item['check'],
-                      onChanged: (v) {
-                        // set the 'check' value to the new checkbox value(v)
-                        item['check'] = v;
-                        setState(() {});
-                      },
-                      title: Text(item['label'])));
+                key: UniqueKey(),
+                onDismissed: (direction) {
+                  // Remove the item from the data source.
+                  setState(() {
+                    _toDos.removeAt(index);
+                  });
+                  // Show a snackbar. This snackbar could also contain "Undo" actions.
+                  Scaffold.of(context).showSnackBar(
+                      SnackBar(content: Text("${item['label']} dismissed")));
+                },
+                child: CheckboxListTile(
+                    value: item['check'],
+                    onChanged: (v) {
+                      // set the 'check' value to the new checkbox value(v)
+                      item['check'] = v;
+                      setState(() {});
+                    },
+                    title: Text(item['label'])),
+                secondaryBackground: Container(
+                  color: Colors.red,
+                  child: Align(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          " Delete",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                      ],
+                    ),
+                    alignment: Alignment.centerRight,
+                  ),
+                ),
+                background: Container(
+                  color: Colors.green,
+                  child: Align(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Icon(
+                          Icons.archive,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          " Archive",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
+                    ),
+                    alignment: Alignment.centerLeft,
+                  ),
+                ),
+              );
             }, childCount: _toDos.length),
           ),
         ],

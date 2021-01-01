@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reorderables/reorderables.dart';
+import '../code/GlobalState.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -7,9 +8,42 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  // Will generate out list as Maps so we can update the check for each of them
-  List<Map> _toDos = List.generate(
-      0, (int index) => {'check': false, 'label': 'index $index'});
+  GlobalState _store = GlobalState.instance;
+
+  @override
+  void initState() {
+    List toDos = _store.get('main');
+    List archived = _store.get('archived');
+    List history = _store.get('history');
+
+    if (toDos != []) {
+      _toDos = toDos;
+    } else {
+      toDos = List.generate(
+          0, (int index) => {'check': false, 'label': 'index $index'});
+      _toDos = toDos;
+    }
+
+    if (archived != []) {
+      _archived = archived;
+    } else {
+      toDos = List.generate(
+          0, (int index) => {'check': false, 'label': 'index $index'});
+      _archived = archived;
+    }
+
+    if (history != []) {
+      _history = history;
+    } else {
+      toDos = List.generate(
+          0, (int index) => {'check': false, 'label': 'index $index'});
+      _history = history;
+    }
+  }
+
+  List _toDos;
+  List _archived;
+  List _history;
 
   void _add() {
     if (_value != '') {
@@ -62,19 +96,23 @@ class _HomeState extends State<Home> {
                 (BuildContext context, int index) {
               // get out map from the list
               Map item = _toDos[index];
-              return Dismissible(
+              return Card(
+                  child: Dismissible(
                 key: UniqueKey(),
                 onDismissed: (direction) {
                   // Remove the dismissed item from the list
+                  var value = _toDos[index];
                   _toDos.removeAt(index);
 
                   String action;
                   if (direction == DismissDirection.startToEnd) {
                     // archiveItem();
                     action = "archived";
+                    _archived.add(value);
                   } else {
                     // deletedItem();
                     action = "deleted";
+                    _history.add(value['label']);
                   }
                   Scaffold.of(context).showSnackBar(
                     SnackBar(
@@ -88,6 +126,11 @@ class _HomeState extends State<Home> {
                             setState(() {
                               _toDos.insert(index, item);
                             });
+                            if (action == 'archived') {
+                              _archived.removeLast();
+                            } else if (action == 'deleted') {
+                              _history.removeLast();
+                            }
                           }),
                       content: Text("${item['label']} $action"),
                     ),
@@ -153,7 +196,7 @@ class _HomeState extends State<Home> {
                     alignment: Alignment.centerLeft,
                   ),
                 ),
-              );
+              ));
             }, childCount: _toDos.length),
           ),
         ],
@@ -177,6 +220,9 @@ class _HomeState extends State<Home> {
                   leading: Icon(Icons.archive),
                   title: Text('Archive'),
                   onTap: () {
+                    _store.set('main', _toDos);
+                    _store.set('archived', _archived);
+                    _store.set('history', _history);
                     Navigator.of(context).pushNamedAndRemoveUntil(
                         '/Archive', (Route<dynamic> route) => false);
                   }),
@@ -184,6 +230,9 @@ class _HomeState extends State<Home> {
                   leading: Icon(Icons.delete),
                   title: Text('History'),
                   onTap: () {
+                    _store.set('main', _toDos);
+                    _store.set('archived', _archived);
+                    _store.set('history', _history);
                     Navigator.of(context).pushNamedAndRemoveUntil(
                         '/History', (Route<dynamic> route) => false);
                   }),

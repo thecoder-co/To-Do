@@ -4,19 +4,19 @@ import 'dart:io';
 import 'dart:convert';
 
 class GlobalState {
-  Map _toDos = _read_file();
+  Map _toDos = {'main': [], 'archived': [], 'history': []}; //_write_file()
 
   static GlobalState instance = new GlobalState._();
   GlobalState._();
 
   set(dynamic key, dynamic value) {
     _toDos[key] = value;
-    _write_file();
+    // _write_file();
   }
 
   get(key) => _toDos[key];
 
-  Future<File> _getLocalFile() async {
+  /* Future<File> _getLocalFile() async {
     // get the path to the document directory.
     String dir = (await getApplicationDocumentsDirectory()).path;
     return new File('$dir/toDos.txt');
@@ -37,5 +37,11 @@ class GlobalState {
   Future<Null> _write_file() async {
     String save_file = jsonEncode(_toDos);
     await (await _getLocalFile()).writeAsString('$save_file');
+  
+    
   }
+
+
+  work in progress
+  */
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'screens/Home.dart';
-import 'screens/Archive.dart';
-import 'screens/History.dart';
+import 'screens/home.dart';
+import 'screens/archive.dart';
+import 'screens/history.dart';
 
 void main() => runApp(MyApp());
 

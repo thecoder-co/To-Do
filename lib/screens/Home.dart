@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:reorderables/reorderables.dart';
-import '../code/GlobalState.dart';
+import '../code/globalState.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'dart:async';
+import 'dart:convert';
 
 class Home extends StatefulWidget {
   @override
@@ -12,36 +16,48 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    List toDos = _store.get('main');
-    List archived = _store.get('archived');
-    List history = _store.get('history');
+    super.initState();
+    _writeContent();
+    _readContent().then((Map value) {
+      setState(() {
+        _toDo = value;
+      });
+    });
+  }
 
-    if (toDos != []) {
-      _toDos = toDos;
-    } else {
-      toDos = List.generate(
-          0, (int index) => {'check': false, 'label': 'index $index'});
-      _toDos = toDos;
-    }
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+    // For your reference print the AppDoc directory
+    print(directory.path);
+    return directory.path;
+  }
 
-    if (archived != []) {
-      _archived = archived;
-    } else {
-      toDos = List.generate(
-          0, (int index) => {'check': false, 'label': 'index $index'});
-      _archived = archived;
-    }
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/data.txt');
+  }
 
-    if (history != []) {
-      _history = history;
-    } else {
-      toDos = List.generate(
-          0, (int index) => {'check': false, 'label': 'index $index'});
-      _history = history;
+  Future<Map> _readContent() async {
+    try {
+      final file = await _localFile;
+      // Read the file
+      String contents = await file.readAsString();
+      Map toDos = jsonDecode(contents);
+      return toDos;
+    } catch (e) {
+      // If there is an error reading, return a default String
+      return {'main': [], 'archived': [], 'history': []};
     }
   }
 
-  List _toDos;
+  Future<File> _writeContent() async {
+    final file = await _localFile;
+    // Write the file
+    return file.writeAsString(jsonEncode(_toDos));
+  }
+
+  Map _toDo;
+  List _toDos = _toDo['main'];
   List _archived;
   List _history;
 

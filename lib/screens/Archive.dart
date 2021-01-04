@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reorderables/reorderables.dart';
-import '../code/GlobalState.dart';
+import '../code/globalState.dart';
 
 class Archive extends StatefulWidget {
   @override

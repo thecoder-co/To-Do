@@ -40,6 +40,12 @@ class _ArchiveState extends State<Archive> {
     }
   }
 
+  List drawerItems = [
+    {"icon": Icons.archive, "name": "Archive", "onTap": '/archive'},
+    {"icon": Icons.home, "name": "Home", "onTap": "/home"},
+    {"icon": Icons.history, "name": "History", "onTap": '/history'}
+  ];
+
   List _toDos;
   List _archived;
   List _history;
@@ -180,43 +186,39 @@ class _ArchiveState extends State<Archive> {
           ]),
       drawer: Drawer(
         child: Container(
-          padding: EdgeInsets.all(10.0),
           child: ListView(
             children: <Widget>[
-              ListTile(
-                  leading: Icon(Icons.book),
-                  title: Text('To-Do List'),
-                  onTap: null),
-              ListTile(
-                  leading: Icon(Icons.home),
-                  title: Text('Home'),
-                  onTap: () {
-                    _store.set('main', _toDos);
-                    _store.set('archived', _archived);
-                    _store.set('history', _history);
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/Home', (Route<dynamic> route) => false);
-                  }),
-              ListTile(
-                  leading: Icon(Icons.archive),
-                  title: Text('Archive'),
-                  onTap: () {
-                    Navigator.pop(context);
-                  }),
-              ListTile(
-                  leading: Icon(Icons.delete),
-                  title: Text('History'),
-                  onTap: () {
-                    _store.set('main', _toDos);
-                    _store.set('archived', _archived);
-                    _store.set('history', _history);
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/History', (Route<dynamic> route) => false);
-                  }),
-              ListTile(
-                  leading: Icon(Icons.close),
-                  title: Text('Close'),
-                  onTap: () => Navigator.pop(context))
+              DrawerHeader(
+                child: Text(
+                  "TO-DO LIST",
+                  style: TextStyle(color: Colors.white),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                ),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: drawerItems.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Map item = drawerItems[index];
+                  return ListTile(
+                    leading: Icon(item['icon']),
+                    title: Text(item['name']),
+                    onTap: index == 0
+                        ? () {
+                            Navigator.pop(context);
+                          }
+                        : () {
+                            _store.set('main', _toDos);
+                            _store.set('archived', _archived);
+                            _store.set('history', _history);
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                item['onTap'], (Route<dynamic> route) => false);
+                          },
+                  );
+                },
+              ),
             ],
           ),
         ),

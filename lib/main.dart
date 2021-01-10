@@ -12,9 +12,9 @@ class MyApp extends StatelessWidget {
       title: 'Navigation',
       routes: <String, WidgetBuilder>{
         //All available pages
-        '/Home': (BuildContext context) => Home(),
-        '/Archive': (BuildContext context) => Archive(),
-        '/History': (BuildContext context) => History(),
+        '/home': (BuildContext context) => Home(),
+        '/archive': (BuildContext context) => Archive(),
+        '/history': (BuildContext context) => History(),
       },
       home: Home(), //first page displayed
     );

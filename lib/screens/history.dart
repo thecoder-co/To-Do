@@ -44,6 +44,12 @@ class _HistoryState extends State<History> {
   List _archived;
   List _history;
 
+  List drawerItems = [
+    {"icon": Icons.history, "name": "History", "onTap": '/history'},
+    {"icon": Icons.archive, "name": "Archive", "onTap": '/archive'},
+    {"icon": Icons.home, "name": "Home", "onTap": "/home"}
+  ];
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
@@ -178,34 +184,37 @@ class _HistoryState extends State<History> {
           padding: EdgeInsets.all(10.0),
           child: ListView(
             children: <Widget>[
-              ListTile(
-                  leading: Icon(Icons.book),
-                  title: Text('To-Do List'),
-                  onTap: null),
-              ListTile(
-                  leading: Icon(Icons.home),
-                  title: Text('Home'),
-                  onTap: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/Home', (Route<dynamic> route) => false);
-                  }),
-              ListTile(
-                  leading: Icon(Icons.archive),
-                  title: Text('Archive'),
-                  onTap: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/Archive', (Route<dynamic> route) => false);
-                  }),
-              ListTile(
-                  leading: Icon(Icons.delete),
-                  title: Text('History'),
-                  onTap: () {
-                    Navigator.pop(context);
-                  }),
-              ListTile(
-                  leading: Icon(Icons.close),
-                  title: Text('Close'),
-                  onTap: () => Navigator.pop(context))
+              DrawerHeader(
+                child: Text(
+                  "TO-DO LIST",
+                  style: TextStyle(color: Colors.white),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                ),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: drawerItems.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Map item = drawerItems[index];
+                  return ListTile(
+                    leading: Icon(item['icon']),
+                    title: Text(item['name']),
+                    onTap: index == 0
+                        ? () {
+                            Navigator.pop(context);
+                          }
+                        : () {
+                            _store.set('main', _toDos);
+                            _store.set('archived', _archived);
+                            _store.set('history', _history);
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                item['onTap'], (Route<dynamic> route) => false);
+                          },
+                  );
+                },
+              ),
             ],
           ),
         ),
